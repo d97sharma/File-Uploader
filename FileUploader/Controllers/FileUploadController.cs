@@ -8,10 +8,12 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
+using System.Web.Http.Cors;
 using System.Web.Http.Results;
 
 namespace FileUploader.Controllers
 {
+    [EnableCors(origins: "*", headers: "*", methods: "*")]
     [RoutePrefix("api/upload")]
     public class FileUploadController : ApiController
     {
@@ -30,9 +32,8 @@ namespace FileUploader.Controllers
                 foreach (string file in httpRequest.Files)
                 {
                     var postedFile = httpRequest.Files[file];
-                    //var filePath = HttpContext.Current.Server.MapPath("~/" + postedFile.FileName);
-                    //var filePath = "C:\\Tech Talk\\FileUploader\\FileUploader\\FileUploader\\Uploaded" + "~/" + postedFile.FileName;
-                    var filePath = "C:\\Uploaded Files\\" + postedFile.FileName;
+                  
+                    var filePath = "C:\\UploadedPDFs\\" + postedFile.FileName;
                     postedFile.SaveAs(filePath);
                     docfiles.Add(filePath);
                 }
