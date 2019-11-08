@@ -1,6 +1,7 @@
 ﻿using FileUploader.Models;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -27,8 +28,27 @@ namespace FileUploader.Controllers
         {
             HttpResponseMessage result = null;
             var httpRequest = HttpContext.Current.Request;
+
+            
             if (httpRequest.Files.Count > 0)
             {
+                //to make a new folder if it does not exist
+                string Parentdirectory = "C:\\Uploaded Files\\" + httpRequest.Form["FileType"];
+                if (!Directory.Exists(Parentdirectory))
+                    Directory.CreateDirectory(Parentdirectory);
+
+                //deletes all files in the directory
+                System.IO.DirectoryInfo directoryInfo = new DirectoryInfo("C:\\Uploaded Files\\" + httpRequest.Form["FileType"] + "\\");
+
+                foreach (FileInfo file in directoryInfo.GetFiles())
+                {
+                    file.Delete();
+                }
+                foreach (DirectoryInfo directory in directoryInfo.GetDirectories())
+                {
+                    directory.Delete(true);
+                }
+
                 // Forming the path to save templates based on user
                 string fileType = httpRequest.Form["FileType"] + "\\"; 
 
@@ -36,7 +56,7 @@ namespace FileUploader.Controllers
                 foreach (string file in httpRequest.Files)
                 {
                     var postedFile = httpRequest.Files[file];
-                    var filePath = "C:\\Users\\myasin\\Desktop\\Tech Talk\\TemplateRepo\\" + fileType + postedFile.FileName;                
+                    var filePath = "C:\\Uploaded Files\\" + fileType + postedFile.FileName;
                     postedFile.SaveAs(filePath);
                     docfiles.Add(filePath);
                 }
